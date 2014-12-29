@@ -99,6 +99,7 @@ class Soket_Event_Import extends Soket_API{
 			update_post_meta($post_id,'_EventStartDate',$this->changeDateformat($event['start_date_string']." ".$event['start_time_string']));
 			update_post_meta($post_id,'_EventEndDate',$this->changeDateformat($event['end_date_string']." ".$event['end_time_string']));		
 			update_post_meta($post_id,'_EventVenueID',$this->addVenuePostType($event['location']['name']));
+			update_post_meta($post_id,'_EventFeaturedImage',$event['event_image']);
 			
 			//assign event category
 			$this->assignEventCategory($post_id, $event['event_type']);
