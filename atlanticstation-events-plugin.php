@@ -105,7 +105,7 @@ class Soket_Event_Import extends Soket_API{
 			$this->assignEventCategory($post_id, $event['event_type']);
 			
 			//set event featured image if image is available
-			if($event['event_image']) $this->setEventFeaturedImage($post_id, $event['event_image']);
+			//if($event['event_image']) $this->setEventFeaturedImage($post_id, $event['event_image']);
 		//}
 		
 	} // end programmatically_create_post
