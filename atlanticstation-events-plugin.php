@@ -48,7 +48,6 @@ class Soket_Event_Import extends Soket_API{
 	//* Process adding event post type
 	function process_event_post_type(){           
 		 $events = parent::get_all_events(); //retrieve all events under -30 days from the current date  
-		 echo count($events)."ASD";
 		 if($events){
 			 $this->deleteEventsandMedia(); // delete events upon adding
 			 $this->prepareEvents($events);
@@ -103,7 +102,7 @@ class Soket_Event_Import extends Soket_API{
 			
 			//assign event category
 			$this->assignEventCategory($post_id, $event['event_type']);
-			
+						
 			//set event featured image if image is available
 			//if($event['event_image']) $this->setEventFeaturedImage($post_id, $event['event_image']);
 		//}
@@ -157,59 +156,13 @@ class Soket_Event_Import extends Soket_API{
 			wp_set_post_terms( $post_id, $new_term['term_id'], $taxonomy );
 		}
 	}
-
-	//* set event featured image
-	function setEventFeaturedImage($post_id, $image_url){
-		$upload_dir = wp_upload_dir();
-		$image_data = @file_get_contents($image_url);
-		if($image_data){
-			$filename = basename($image_url);
-			if(wp_mkdir_p($upload_dir['path']))
-				$file = $upload_dir['path'] . '/' . $filename;
-			else
-				$file = $upload_dir['basedir'] . '/' . $filename;
-			file_put_contents($file, $image_data);
-			
-			$wp_filetype = wp_check_filetype($filename, null );
-			$attachment = array(
-				'post_mime_type' => $wp_filetype['type'],
-				'post_title' => sanitize_file_name($filename),
-				'post_content' => '',
-				'post_status' => 'inherit'
-			);		
-			$attach_id = wp_insert_attachment( $attachment, $file, $post_id );
-			update_post_meta($attach_id,'_deletionStatus','yes'); //add special post meta
-			require_once(ABSPATH . 'wp-admin/includes/image.php');
-			$attach_data = wp_generate_attachment_metadata( $attach_id, $file );
-			wp_update_attachment_metadata( $attach_id, $attach_data );
-			
-			set_post_thumbnail( $post_id, $attach_id );
-		}
-	}
-
+	
 	//delete existing events  
 	function deleteEventsandMedia(){
 		global $wpdb;                
 		$wpdb->query("DELETE {$wpdb->prefix}posts.* FROM {$wpdb->prefix}posts INNER JOIN {$wpdb->prefix}postmeta ON {$wpdb->prefix}postmeta.post_id = {$wpdb->prefix}posts.ID WHERE ({$wpdb->prefix}posts.post_type ='tribe_events' OR {$wpdb->prefix}posts.post_type ='attachment') AND ({$wpdb->prefix}postmeta.meta_key = '_deletionStatus' AND {$wpdb->prefix}postmeta.meta_value = 'yes')"); 		
 	}
-	
-	//delete attachments = CURRENTLY UNUSED
-	function delete_post_media( $post_id ) {
-		$attachments = get_posts( array(
-			'post_type'      => 'attachment',
-			'posts_per_page' => -1,
-			'post_status'    => 'any',
-			'post_parent'    => $post_id
-		) );
-	
-		foreach ( $attachments as $attachment ) {
-			if ( false === wp_delete_attachment( $attachment->ID ) ) {
-				// Log failure to delete attachment.
-			}
-		}
-		 wp_reset_postdata();
-	}
-	
+		
 	//add a custom cron schedule three minutes
 	function custom_cron_schedules($param) {
 		 return array('five_minutes' => array(
