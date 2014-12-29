@@ -30,11 +30,11 @@ class Soket_Event_Import extends Soket_API{
 	function __construct(){	
 		//* 2 lines below can be removed
 		//add_shortcode("DISPLAY_EVENTS",array(&$this,"displayEvents"));		
-		add_action('wp_head',array(&$this,'process_event_post_type'));              
+		//add_action('wp_head',array(&$this,'process_event_post_type'));              
 		//process schedule		
 		register_activation_hook(SOKETEVENTS_PATH . '/atlanticstation-events-plugin.php', array(&$this,'soketevents_activation'));
 		//add_filter('cron_schedules', array(&$this,'custom_cron_schedules'));
-		//add_action('soketimport', array(&$this,'process_event_post_type'));  //PRIMARY
+		add_action('soketimport', array(&$this,'process_event_post_type'));  //PRIMARY
 		//* add the settings page
 		add_action( 'admin_menu', array(&$this,'soket_menu') );
 	}	
@@ -76,7 +76,7 @@ class Soket_Event_Import extends Soket_API{
 	 */
 	function add_event_post_type($event) {
 		//if event doesnt exists
-		if($this->is_event_exists($event) == false){		
+		//if($this->is_event_exists($event) == false){		
 			// Initialize the page ID to -1. This indicates no action has been taken.
 			$post_id = -1;
 			
@@ -105,7 +105,7 @@ class Soket_Event_Import extends Soket_API{
 			
 			//set event featured image if image is available
 			if($event['event_image']) $this->setEventFeaturedImage($post_id, $event['event_image']);
-		}
+		//}
 		
 	} // end programmatically_create_post
 
